@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --bg: #0b0b10;
+  --surface: #13131c;
+  --surface2: #1a1a27;
+  --border: #2a2a3d;
+  --text: #e8e8f0;
+  --text-muted: #b8b8d4;
+  --accent: #7c6dfa;
+  --accent-glow: rgba(124,109,250,0.25);
+  --mic-size: 72px;
+  --bar-h: 8px;
+}
+
+[data-theme="light"] {
+  --bg: #f0f0f7;
+  --surface: #ffffff;
+  --surface2: #e8e8f2;
+  --border: #d0d0e0;
+  --text: #1a1a2e;
+  --text-muted: #5a5a7a;
+  --accent: #6355e0;
+  --accent-glow: rgba(99,85,224,0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  overflow: hidden;
+  font-size: 18px;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  :root { --mic-size: 80px; }
+}
