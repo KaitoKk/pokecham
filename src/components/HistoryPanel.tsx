@@ -1,6 +1,15 @@
 import { TYPE_COLORS } from '../data/pokemon';
+import type { Pokemon } from '../data/pokemon';
 
-export default function HistoryPanel({ history, isOpen, onClose, onSelect, onClear }) {
+interface HistoryPanelProps {
+  history: Pokemon[];
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (p: Pokemon) => void;
+  onClear: () => void;
+}
+
+export default function HistoryPanel({ history, isOpen, onClose, onSelect, onClear }: HistoryPanelProps) {
   return (
     <>
       {isOpen && (
@@ -47,8 +56,8 @@ export default function HistoryPanel({ history, isOpen, onClose, onSelect, onCle
                 padding: '9px 10px', borderRadius: 8, cursor: 'pointer',
                 transition: 'background 0.15s'
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface2)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface2)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
               <div style={{
                 width: 8, height: 8, borderRadius: '50%', flexShrink: 0,

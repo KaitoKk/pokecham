@@ -1,16 +1,18 @@
 import { useEffect, useRef, memo } from 'react';
 import { TYPE_COLORS, STAT_LABELS } from '../data/pokemon';
+import type { Pokemon } from '../data/pokemon';
 import TypeMatchup from './TypeMatchup';
 import CandidateList from './CandidateList';
 import IdleState from './IdleState';
+import type { PokemonState } from '../hooks/usePokemonState';
 
-const TIER_COLORS = {
+const TIER_COLORS: Record<string, string> = {
   'Uber': '#e85d5d', 'OU': '#7c6dfa', 'UU': '#5dd86a', 'RU': '#f5c842',
   'NU': '#e8a45d', 'PU': '#5db8e8', 'ZU': '#888', 'NFE': '#aaa',
   'LC': '#bbb', 'AG': '#ff4444',
 };
 
-function TierBadge({ tier }) {
+function TierBadge({ tier }: { tier?: string }) {
   if (!tier || tier === 'Illegal') return null;
   const color = TIER_COLORS[tier] || '#888';
   return (
@@ -21,14 +23,14 @@ function TierBadge({ tier }) {
   );
 }
 
-function statColor(v) {
+function statColor(v: number): string {
   if (v >= 130) return '#7c6dfa';
   if (v >= 100) return '#5dd86a';
   if (v >= 70)  return '#f5c842';
   return '#e85d5d';
 }
 
-function calcSpeed(base, ev, natureMod, level = 50) {
+function calcSpeed(base: number, ev: number, natureMod: number, level = 50): number {
   return Math.floor((Math.floor((2 * base + 31 + Math.floor(ev / 4)) * level / 100) + 5) * natureMod);
 }
 
@@ -42,7 +44,12 @@ const SPEED_ROWS = [
 const PAD = '12px 14px';
 const BORDER_B = '1px solid var(--border)';
 
-const SectionHeader = memo(function SectionHeader({ pokemon, style }) {
+interface SectionProps {
+  pokemon: Pokemon | null;
+  style?: React.CSSProperties;
+}
+
+const SectionHeader = memo(function SectionHeader({ pokemon, style }: SectionProps) {
   if (!pokemon) return <div style={style} />;
   return (
     <div style={{ padding: PAD, borderBottom: BORDER_B, animation: 'slideUp 0.25s ease', ...style }}>
@@ -56,6 +63,7 @@ const SectionHeader = memo(function SectionHeader({ pokemon, style }) {
               {pokemon.form}
             </div>
           )}
+          <TierBadge tier={pokemon.tier} />
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em', flexShrink: 0 }}>
           {pokemon.no}
@@ -65,7 +73,7 @@ const SectionHeader = memo(function SectionHeader({ pokemon, style }) {
   );
 });
 
-const SectionTypes = memo(function SectionTypes({ pokemon, style }) {
+const SectionTypes = memo(function SectionTypes({ pokemon, style }: SectionProps) {
   if (!pokemon) return <div style={style} />;
   return (
     <div style={{ padding: PAD, borderBottom: BORDER_B, display: 'flex', gap: 6, flexWrap: 'wrap', ...style }}>
@@ -81,7 +89,7 @@ const SectionTypes = memo(function SectionTypes({ pokemon, style }) {
   );
 });
 
-const SectionMatchup = memo(function SectionMatchup({ pokemon, style }) {
+const SectionMatchup = memo(function SectionMatchup({ pokemon, style }: SectionProps) {
   if (!pokemon) return <div style={style} />;
   return (
     <div style={{ borderBottom: BORDER_B, ...style }}>
@@ -90,8 +98,8 @@ const SectionMatchup = memo(function SectionMatchup({ pokemon, style }) {
   );
 });
 
-const SectionStats = memo(function SectionStats({ pokemon, style }) {
-  const barRefs = useRef([]);
+const SectionStats = memo(function SectionStats({ pokemon, style }: SectionProps) {
+  const barRefs = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
     barRefs.current.forEach(el => { if (el) el.style.width = '0%'; });
     if (!pokemon) return;
@@ -117,7 +125,7 @@ const SectionStats = memo(function SectionStats({ pokemon, style }) {
           </div>
           <div style={{ height: 8, background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
             <div
-              ref={el => barRefs.current[i] = el}
+              ref={el => { barRefs.current[i] = el; }}
               style={{ height: '100%', borderRadius: 4, width: '0%', background: statColor(pokemon.stats[i]), transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)' }}
             />
           </div>
@@ -131,7 +139,7 @@ const SectionStats = memo(function SectionStats({ pokemon, style }) {
   );
 });
 
-const SectionAbilities = memo(function SectionAbilities({ pokemon, style }) {
+const SectionAbilities = memo(function SectionAbilities({ pokemon, style }: SectionProps) {
   if (!pokemon) return <div style={style} />;
   return (
     <div style={{ padding: PAD, borderBottom: BORDER_B, display: 'flex', flexDirection: 'column', gap: 6, ...style }}>
@@ -160,7 +168,7 @@ const SectionAbilities = memo(function SectionAbilities({ pokemon, style }) {
   );
 });
 
-const SectionSpeed = memo(function SectionSpeed({ pokemon, style }) {
+const SectionSpeed = memo(function SectionSpeed({ pokemon, style }: SectionProps) {
   if (!pokemon) return <div style={style} />;
   return (
     <div style={{ padding: PAD, ...style }}>
@@ -179,7 +187,7 @@ const SectionSpeed = memo(function SectionSpeed({ pokemon, style }) {
   );
 });
 
-function SideStatus({ state }) {
+function SideStatus({ state }: { state: PokemonState }) {
   const { currentPokemon, candidates, notFound, lastQuery, showPokemon } = state;
   if (currentPokemon) return null;
   if (candidates.length > 1) {
@@ -188,15 +196,20 @@ function SideStatus({ state }) {
   return <IdleState notFound={notFound} query={lastQuery} />;
 }
 
-const LEFT_STYLE = { borderRight: '1px solid var(--border)' };
+const LEFT_STYLE: React.CSSProperties = { borderRight: '1px solid var(--border)' };
 
-const SECTIONS = [SectionHeader, SectionTypes, SectionMatchup, SectionStats, SectionAbilities, SectionSpeed];
+type SectionComponent = React.MemoExoticComponent<(props: SectionProps) => React.ReactElement | null>;
+const SECTIONS: SectionComponent[] = [SectionHeader, SectionTypes, SectionMatchup, SectionStats, SectionAbilities, SectionSpeed];
 
-export default function DualCardView({ left, right }) {
+interface DualCardViewProps {
+  left: PokemonState;
+  right: PokemonState;
+}
+
+export default function DualCardView({ left, right }: DualCardViewProps) {
   const hasAny = left.currentPokemon || right.currentPokemon;
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-      {/* Status row: idle / not-found (hidden when Pokemon is shown) */}
       <div style={LEFT_STYLE}>
         {!left.currentPokemon && <SideStatus state={left} />}
       </div>
@@ -204,13 +217,11 @@ export default function DualCardView({ left, right }) {
         {!right.currentPokemon && <SideStatus state={right} />}
       </div>
 
-      {/* Section rows: each pair shares the same grid row, heights auto-align */}
       {hasAny && SECTIONS.flatMap((Comp, i) => [
         <Comp key={`l-${i}`} pokemon={left.currentPokemon} style={LEFT_STYLE} />,
         <Comp key={`r-${i}`} pokemon={right.currentPokemon} />,
       ])}
 
-      {/* Candidates row: shown below card when multiple forms are available */}
       <div style={{ padding: left.candidates.length > 1 ? '8px' : 0, ...LEFT_STYLE }}>
         {left.candidates.length > 1 && (
           <CandidateList candidates={left.candidates} onSelect={left.showPokemon} query={left.lastQuery} />

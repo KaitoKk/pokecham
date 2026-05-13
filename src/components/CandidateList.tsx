@@ -1,7 +1,14 @@
 import { memo } from 'react';
 import { TYPE_COLORS } from '../data/pokemon';
+import type { Pokemon } from '../data/pokemon';
 
-export default memo(function CandidateList({ candidates, query, onSelect }) {
+interface CandidateListProps {
+  candidates: Pokemon[];
+  query: string;
+  onSelect: (p: Pokemon) => void;
+}
+
+export default memo(function CandidateList({ candidates, query, onSelect }: CandidateListProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{
@@ -25,8 +32,8 @@ export default memo(function CandidateList({ candidates, query, onSelect }) {
           }}
           onMouseEnter={e => { e.currentTarget.style.background = 'var(--surface2)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+          onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
+          onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
         >
           <span>
             {p.name}

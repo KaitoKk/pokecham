@@ -1,7 +1,14 @@
 import { useState, useCallback } from 'react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
-function PanelMicButton({ isListening, isReady, transcript, onToggle }) {
+interface PanelMicButtonProps {
+  isListening: boolean;
+  isReady: boolean;
+  transcript: string;
+  onToggle: () => void;
+}
+
+function PanelMicButton({ isListening, isReady, transcript, onToggle }: PanelMicButtonProps) {
   const btnBg = isReady ? '#e85d5d' : 'var(--accent)';
   const btnShadow = isReady
     ? '0 4px 20px rgba(232,93,93,0.5)'
@@ -41,10 +48,10 @@ function PanelMicButton({ isListening, isReady, transcript, onToggle }) {
           WebkitTapHighlightColor: 'transparent',
           animation: isReady ? 'micPulse 1.2s ease-in-out infinite' : 'none'
         }}
-        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.93)'}
-        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-        onTouchStart={e => e.currentTarget.style.transform = 'scale(0.93)'}
-        onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+        onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.93)')}
+        onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+        onTouchStart={e => (e.currentTarget.style.transform = 'scale(0.93)')}
+        onTouchEnd={e => (e.currentTarget.style.transform = 'scale(1)')}
       >
         {isListening ? '⏹' : '🎤'}
       </button>
@@ -52,11 +59,15 @@ function PanelMicButton({ isListening, isReady, transcript, onToggle }) {
   );
 }
 
-export default function PokemonPanel({ onQuery }) {
+interface PokemonPanelProps {
+  onQuery: (query: string) => void;
+}
+
+export default function PokemonPanel({ onQuery }: PokemonPanelProps) {
   const [transcript, setTranscript] = useState('');
   const { isListening, isReady, startListening } = useSpeechRecognition({
-    onResult: useCallback((t) => { onQuery(t); }, [onQuery]),
-    onInterim: useCallback((t) => setTranscript(t), []),
+    onResult: useCallback((t: string) => { onQuery(t); }, [onQuery]),
+    onInterim: useCallback((t: string) => setTranscript(t), []),
   });
 
   return (

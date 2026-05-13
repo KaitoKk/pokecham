@@ -1,16 +1,25 @@
 import { useState, useRef, useCallback } from 'react';
 
-let sharedAudioCtx = null;
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+    SpeechRecognition?: typeof SpeechRecognition;
+    webkitSpeechRecognition?: typeof SpeechRecognition;
+  }
+}
 
-function getAudioCtx() {
+let sharedAudioCtx: AudioContext | null = null;
+
+function getAudioCtx(): AudioContext {
   if (!sharedAudioCtx) {
-    sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioCtx = window.AudioContext || window.webkitAudioContext!;
+    sharedAudioCtx = new AudioCtx();
   }
   if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
   return sharedAudioCtx;
 }
 
-function playBeep() {
+function playBeep(): void {
   try {
     const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
@@ -22,14 +31,19 @@ function playBeep() {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.12);
-  } catch (e) { /* 無音環境では無視 */ }
+  } catch { /* 無音環境では無視 */ }
 }
 
-export function useSpeechRecognition({ onResult, onInterim }) {
+interface UseSpeechRecognitionOptions {
+  onResult: (transcript: string) => void;
+  onInterim?: (transcript: string) => void;
+}
+
+export function useSpeechRecognition({ onResult, onInterim }: UseSpeechRecognitionOptions) {
   const [isListening, setIsListening] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const shouldStopRef = useRef(false);
-  const recRef = useRef(null);
+  const recRef = useRef<InstanceType<typeof SpeechRecognition> | null>(null);
 
   const onResultRef = useRef(onResult);
   const onInterimRef = useRef(onInterim);
@@ -53,14 +67,10 @@ export function useSpeechRecognition({ onResult, onInterim }) {
     setIsListening(true);
     getAudioCtx();
 
-    let sessionCount = 0;
-
     function start() {
       if (shouldStopRef.current) return;
 
-      sessionCount++;
-
-      const rec = new SR();
+      const rec = new SR!();
       recRef.current = rec;
       rec.lang = 'ja-JP';
       rec.interimResults = true;
@@ -72,7 +82,7 @@ export function useSpeechRecognition({ onResult, onInterim }) {
         setIsReady(true);
       };
 
-      rec.onresult = (e) => {
+      rec.onresult = (e: SpeechRecognitionEvent) => {
         const result = e.results[e.results.length - 1];
         const transcript = result[0].transcript;
         if (result.isFinal) {
@@ -84,7 +94,7 @@ export function useSpeechRecognition({ onResult, onInterim }) {
         }
       };
 
-      rec.onerror = (e) => {
+      rec.onerror = (e: SpeechRecognitionErrorEvent) => {
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
           console.warn('Speech error (terminal):', e.error);
           shouldStopRef.current = true;
@@ -103,7 +113,7 @@ export function useSpeechRecognition({ onResult, onInterim }) {
 
       try {
         rec.start();
-      } catch (err) {
+      } catch {
         setTimeout(start, 300);
       }
     }

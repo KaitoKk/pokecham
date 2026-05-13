@@ -1,4 +1,10 @@
-function IconButton({ onClick, children, title }) {
+interface IconButtonProps {
+  onClick: () => void;
+  children: React.ReactNode;
+  title: string;
+}
+
+function IconButton({ onClick, children, title }: IconButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -14,7 +20,13 @@ function IconButton({ onClick, children, title }) {
   );
 }
 
-export default function Header({ onHistoryToggle, theme, onThemeToggle }) {
+interface HeaderProps {
+  onHistoryToggle: () => void;
+  theme: string;
+  onThemeToggle: () => void;
+}
+
+export default function Header({ onHistoryToggle, theme, onThemeToggle }: HeaderProps) {
   return (
     <header style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',

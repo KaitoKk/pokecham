@@ -1,9 +1,13 @@
 import '../App.css';
 
-export default function MicButton({ isListening, isReady, transcript, onToggle }) {
-  // isListening=false              → 待機中（紫）
-  // isListening=true, isReady=false → 準備中（紫・点滅なし）
-  // isListening=true, isReady=true  → 録音中（赤・pulse）
+interface MicButtonProps {
+  isListening: boolean;
+  isReady: boolean;
+  transcript: string;
+  onToggle: () => void;
+}
+
+export default function MicButton({ isListening, isReady, transcript, onToggle }: MicButtonProps) {
   const btnBg = isReady ? '#e85d5d' : 'var(--accent)';
   const btnShadow = isReady
     ? '0 4px 28px rgba(232,93,93,0.5)'
@@ -53,10 +57,10 @@ export default function MicButton({ isListening, isReady, transcript, onToggle }
           WebkitTapHighlightColor: 'transparent',
           animation: isReady ? 'micPulse 1.2s ease-in-out infinite' : 'none'
         }}
-        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.93)'}
-        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-        onTouchStart={e => e.currentTarget.style.transform = 'scale(0.93)'}
-        onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+        onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.93)')}
+        onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+        onTouchStart={e => (e.currentTarget.style.transform = 'scale(0.93)')}
+        onTouchEnd={e => (e.currentTarget.style.transform = 'scale(1)')}
       >
         {isListening ? '⏹' : '🎤'}
       </button>

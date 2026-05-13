@@ -1,33 +1,33 @@
-import { ALIASES, POKEMON_DB } from '../data/pokemon';
+import { ALIASES, POKEMON_DB, type Pokemon } from '../data/pokemon';
 
 /** ひらがな → カタカナ */
-function toKatakana(str) {
+function toKatakana(str: string): string {
   return str.replace(/[\u3041-\u3096]/g, ch =>
     String.fromCharCode(ch.charCodeAt(0) + 0x60)
   );
 }
 
 /** 全角英数字・記号 → 半角 */
-function toHalfWidth(str) {
+function toHalfWidth(str: string): string {
   return str
     .replace(/[Ａ-Ｚａ-ｚ０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
     .replace(/　/g, ' ');
 }
 
 /** 長音記号の表記ゆれを統一（－/−/—/‐ → ー） */
-function normalizeChoon(str) {
+function normalizeChoon(str: string): string {
   return str.replace(/[－−—―‐]/g, 'ー');
 }
 
 /** 小書き文字を大文字に統一（ぁ→あ、ァ→ア 等）*/
-function normalizeSmall(str) {
+function normalizeSmall(str: string): string {
   return str
     .replace(/[ぁぃぅぇぉっゃゅょゎ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 1))
     .replace(/[ァィゥェォッャュョヮ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 1));
 }
 
 /** 検索用クエリ正規化 */
-function normalize(str) {
+function normalize(str: string): string {
   let s = str.trim();
   s = toHalfWidth(s);
   s = normalizeChoon(s);
@@ -42,7 +42,7 @@ function normalize(str) {
 const normalizedDB = POKEMON_DB.map(p => ({ p, norm: normalize(p.name) }));
 
 /** メガ接頭辞を検出してメガシンカ形式を検索 */
-function searchMega(q) {
+function searchMega(q: string): Pokemon[] | null {
   if (!q.startsWith('メガ')) return null;
   const base = q.slice(2); // "メガ" を除去
   if (!base) return null;
@@ -62,7 +62,7 @@ function searchMega(q) {
   return null;
 }
 
-export function searchPokemon(query) {
+export function searchPokemon(query: string): Pokemon[] {
   const q = normalize(query);
   if (!q) return [];
 

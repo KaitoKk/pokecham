@@ -10,4 +10,9 @@ export default defineConfig({
       'zlibjs/bin/gunzip.min.js': path.resolve('./src/utils/zlibjsShim.js'),
     },
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+  },
 })

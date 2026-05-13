@@ -1,20 +1,21 @@
 import { useState, useCallback } from 'react';
+import type { Pokemon } from '../data/pokemon';
 
 const STORAGE_KEY = 'pokecham_history';
 const MAX_HISTORY = 20;
 
-function loadHistory() {
+function loadHistory(): Pokemon[] {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as Pokemon[];
   } catch {
     return [];
   }
 }
 
 export function useHistory() {
-  const [history, setHistory] = useState(loadHistory);
+  const [history, setHistory] = useState<Pokemon[]>(loadHistory);
 
-  const addToHistory = useCallback((poke) => {
+  const addToHistory = useCallback((poke: Pokemon) => {
     setHistory(prev => {
       const next = [
         poke,

@@ -1,6 +1,11 @@
 import { memo } from 'react';
 
-export default memo(function IdleState({ notFound, query }) {
+interface IdleStateProps {
+  notFound: boolean;
+  query: string;
+}
+
+export default memo(function IdleState({ notFound, query }: IdleStateProps) {
   if (notFound) {
     return (
       <div style={{

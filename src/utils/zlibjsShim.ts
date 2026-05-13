@@ -7,10 +7,11 @@ import { ungzip } from 'pako';
 
 export const Zlib = {
   Gunzip: class Gunzip {
-    constructor(data) {
+    private _data: Uint8Array;
+    constructor(data: Uint8Array) {
       this._data = data;
     }
-    decompress() {
+    decompress(): Uint8Array {
       return ungzip(this._data);
     }
   }

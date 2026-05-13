@@ -1,6 +1,11 @@
 import { FORMATS } from '../hooks/useFormat';
 
-export default function FormatSelector({ format, onChange }) {
+interface FormatSelectorProps {
+  format: string;
+  onChange: (id: string) => void;
+}
+
+export default function FormatSelector({ format, onChange }: FormatSelectorProps) {
   return (
     <div style={{
       display: 'flex', gap: 6, padding: '8px 16px',

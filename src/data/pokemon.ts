@@ -1,8 +1,25 @@
 import pokemonJson from './pokemon.json';
 
-export const POKEMON_DB = pokemonJson;
+export interface Ability {
+  name: string;
+  hidden: boolean;
+  desc?: string;
+}
 
-export const TYPE_COLORS = {
+export interface Pokemon {
+  name: string;
+  no: string;
+  types: string[];
+  stats: [number, number, number, number, number, number];
+  abilities: Ability[];
+  enName?: string;
+  tier?: string;
+  form?: string;
+}
+
+export const POKEMON_DB: Pokemon[] = pokemonJson as Pokemon[];
+
+export const TYPE_COLORS: Record<string, string> = {
   ノーマル: '#9FA19F', ほのお: '#E76024', みず: '#6493F1', でんき: '#F5D535',
   くさ: '#74CB48', こおり: '#9AD8D8', かくとう: '#C12239', どく: '#A43EC4',
   じめん: '#D97845', ひこう: '#A890F0', エスパー: '#FB5584', むし: '#A8B820',
@@ -10,10 +27,10 @@ export const TYPE_COLORS = {
   はがね: '#B8B8D0', フェアリー: '#EE99AC',
 };
 
-export const STAT_LABELS = ['HP', 'こうげき', 'ぼうぎょ', 'とくこう', 'とくぼう', 'すばやさ'];
+export const STAT_LABELS: string[] = ['HP', 'こうげき', 'ぼうぎょ', 'とくこう', 'とくぼう', 'すばやさ'];
 
 // 音声認識の表記ゆれ・誤変換・略称対応
-export const ALIASES = {
+export const ALIASES: Record<string, string> = {
   // 略称
   'ガブ': 'ガブリアス',
   'バンギ': 'バンギラス',
@@ -72,13 +89,13 @@ export const ALIASES = {
   'ポリゴンＺ': 'ポリゴンＺ',
 
   // 漢字誤変換（音声認識が一般単語に変換するケース）
-  '電流': 'デンリュウ',         // デンリュウ
-  '海竜': 'カイリュー',         // カイリュー
-  '雷中': 'ライチュウ',         // ライチュウ
-  '羽ばたく神': 'ハバタクカミ', // ハバタクカミ
-  '羽バタク神': 'ハバタクカミ', // ハバタクカミ（normalize後）
-  '巨人': 'キョジオーン',       // キョジオーン
-  '怒る': 'イカリュウ',         // おこりゆう候補対策
-  '土砂ドン': 'ドサイドン',     // ドサイドン
-  '万力': 'バンギラス',         // バンギラス
+  '電流': 'デンリュウ',
+  '海竜': 'カイリュー',
+  '雷中': 'ライチュウ',
+  '羽ばたく神': 'ハバタクカミ',
+  '羽バタク神': 'ハバタクカミ',
+  '巨人': 'キョジオーン',
+  '怒る': 'イカリュウ',
+  '土砂ドン': 'ドサイドン',
+  '万力': 'バンギラス',
 };

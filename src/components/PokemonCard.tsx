@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { TYPE_COLORS, STAT_LABELS } from '../data/pokemon';
+import type { Pokemon } from '../data/pokemon';
 import TypeMatchup from './TypeMatchup';
 
-function statColor(v) {
+function statColor(v: number): string {
   if (v >= 130) return '#7c6dfa';
   if (v >= 100) return '#5dd86a';
   if (v >= 70)  return '#f5c842';
@@ -11,9 +12,8 @@ function statColor(v) {
 
 /**
  * 素早さ実数値計算（ポケモンチャンピオンズ: 個体値なし, Lv50）
- * formula: floor((floor(2*base + floor(ev/4)) * level/100 + 5) * nature)
  */
-function calcSpeed(base, ev, natureMod, level = 50) {
+function calcSpeed(base: number, ev: number, natureMod: number, level = 50): number {
   return Math.floor((Math.floor((2 * base + Math.floor(ev / 4)) * level / 100) + 5) * natureMod);
 }
 
@@ -24,13 +24,13 @@ const SPEED_ROWS = [
   { label: '性格- 0',   ev: 0,   nature: 0.9 },
 ];
 
-const TIER_COLORS = {
+const TIER_COLORS: Record<string, string> = {
   'Uber': '#e85d5d', 'OU': '#7c6dfa', 'UU': '#5dd86a', 'RU': '#f5c842',
   'NU': '#e8a45d', 'PU': '#5db8e8', 'ZU': '#888', 'NFE': '#aaa',
   'LC': '#bbb', 'AG': '#ff4444', 'Illegal': '#555',
 };
 
-function TierBadge({ tier }) {
+function TierBadge({ tier }: { tier?: string }) {
   if (!tier || tier === 'Illegal') return null;
   const color = TIER_COLORS[tier] || '#888';
   return (
@@ -43,9 +43,14 @@ function TierBadge({ tier }) {
   );
 }
 
-export default function PokemonCard({ pokemon, format }) {
+interface PokemonCardProps {
+  pokemon: Pokemon;
+  format?: string;
+}
+
+export default function PokemonCard({ pokemon }: PokemonCardProps) {
   const bst = pokemon.stats.reduce((a, b) => a + b, 0);
-  const barRefs = useRef([]);
+  const barRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -131,7 +136,7 @@ export default function PokemonCard({ pokemon, format }) {
             </div>
             <div style={{ height: 8, background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
               <div
-                ref={el => barRefs.current[i] = el}
+                ref={el => { barRefs.current[i] = el; }}
                 style={{
                   height: '100%', borderRadius: 4,
                   width: '0%',
@@ -183,8 +188,6 @@ export default function PokemonCard({ pokemon, format }) {
           </div>
         ))}
       </div>
-
-      {/* Smogon セット: 一時非表示 */}
 
       {/* 素早さ実数値 */}
       <div style={{

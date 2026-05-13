@@ -4,12 +4,14 @@
  */
 import kuromoji from 'kuromoji';
 
-let tokenizerPromise = null;
+type Tokenizer = ReturnType<typeof kuromoji.builder> extends { build: (cb: (err: Error | null, t: infer T) => void) => void } ? T : never;
 
-function getTokenizer() {
+let tokenizerPromise: Promise<Tokenizer> | null = null;
+
+function getTokenizer(): Promise<Tokenizer> {
   if (!tokenizerPromise) {
     tokenizerPromise = new Promise((resolve, reject) => {
-      kuromoji.builder({ dicPath: '/dict' }).build((err, tokenizer) => {
+      kuromoji.builder({ dicPath: '/dict' }).build((err: Error | null, tokenizer: Tokenizer) => {
         if (err) reject(err);
         else resolve(tokenizer);
       });
@@ -22,17 +24,17 @@ function getTokenizer() {
  * 文字列をカタカナ読みに変換する。
  * 変換できない場合は元の文字列を返す。
  */
-export async function toYomiKatakana(text) {
+export async function toYomiKatakana(text: string): Promise<string> {
   try {
     const tokenizer = await getTokenizer();
     const tokens = tokenizer.tokenize(text);
-    return tokens.map(t => t.reading ?? t.surface_form).join('');
+    return tokens.map((t: { reading?: string; surface_form: string }) => t.reading ?? t.surface_form).join('');
   } catch {
     return text;
   }
 }
 
 /** バックグラウンドで辞書をプリロードする */
-export function preloadTokenizer() {
+export function preloadTokenizer(): void {
   getTokenizer().catch(() => {});
 }

@@ -2,7 +2,12 @@ import { useState } from 'react';
 
 const STORAGE_KEY = 'pokecham_format';
 
-export const FORMATS = [
+export interface Format {
+  id: string;
+  label: string;
+}
+
+export const FORMATS: Format[] = [
   { id: 'ou',                   label: 'シングル OU' },
   { id: 'ubers',                label: 'Ubers' },
   { id: 'doublesou',            label: 'ダブル OU' },
@@ -11,11 +16,11 @@ export const FORMATS = [
 ];
 
 export function useFormat() {
-  const [format, setFormatState] = useState(
+  const [format, setFormatState] = useState<string>(
     () => localStorage.getItem(STORAGE_KEY) || 'ou'
   );
 
-  const setFormat = (id) => {
+  const setFormat = (id: string) => {
     localStorage.setItem(STORAGE_KEY, id);
     setFormatState(id);
   };

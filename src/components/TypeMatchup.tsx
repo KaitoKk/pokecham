@@ -10,7 +10,7 @@ const GROUPS = [
   { key: 0,    label: '×0',  bg: '#555',    color: '#aaa'   },
 ];
 
-function TypeBadge({ type }) {
+function TypeBadge({ type }: { type: string }) {
   return (
     <span style={{
       padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700,
@@ -23,11 +23,15 @@ function TypeBadge({ type }) {
   );
 }
 
-export default memo(function TypeMatchup({ types }) {
+interface TypeMatchupProps {
+  types: string[];
+}
+
+export default memo(function TypeMatchup({ types }: TypeMatchupProps) {
   const matchups = useMemo(() => calcMatchups(types), [types]);
 
   const grouped = useMemo(() => {
-    const map = {};
+    const map: Record<number, string[]> = {};
     for (const { type, multiplier } of matchups) {
       if (multiplier === 1) continue;
       if (!map[multiplier]) map[multiplier] = [];

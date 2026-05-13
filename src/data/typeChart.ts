@@ -3,7 +3,7 @@
  * CHART[攻撃タイプ][防御タイプ] = 倍率
  * 記載のないものはデフォルト 1
  */
-const CHART = {
+const CHART: Record<string, Record<string, number>> = {
   ノーマル: { いわ: 0.5, はがね: 0.5, ゴースト: 0 },
   ほのお:   { ほのお: 0.5, みず: 0.5, いわ: 0.5, ドラゴン: 0.5, くさ: 2, こおり: 2, むし: 2, はがね: 2 },
   みず:     { みず: 0.5, くさ: 0.5, ドラゴン: 0.5, ほのお: 2, じめん: 2, いわ: 2 },
@@ -24,18 +24,22 @@ const CHART = {
   フェアリー: { ほのお: 0.5, どく: 0.5, はがね: 0.5, ドラゴン: 2, かくとう: 2, あく: 2 },
 };
 
-const ALL_TYPES = [
+const ALL_TYPES: string[] = [
   'ノーマル','ほのお','みず','でんき','くさ','こおり',
   'かくとう','どく','じめん','ひこう','エスパー','むし',
   'いわ','ゴースト','ドラゴン','あく','はがね','フェアリー',
 ];
 
+export interface TypeMatchup {
+  type: string;
+  multiplier: number;
+}
+
 /**
  * ポケモンのタイプ配列に対する全攻撃タイプの倍率を返す
- * @param {string[]} defenderTypes - ['みず', 'じめん'] など
- * @returns {{ type: string, multiplier: number }[]}
+ * @param defenderTypes - ['みず', 'じめん'] など
  */
-export function calcMatchups(defenderTypes) {
+export function calcMatchups(defenderTypes: string[]): TypeMatchup[] {
   return ALL_TYPES.map(atk => {
     const multiplier = defenderTypes.reduce((acc, def) => {
       return acc * (CHART[atk]?.[def] ?? 1);

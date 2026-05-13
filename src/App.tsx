@@ -12,7 +12,7 @@ import { preloadTokenizer } from './utils/yomi';
 
 export default function App() {
   const [historyOpen, setHistoryOpen] = useState(false);
-  const { history, addToHistory, clearHistory } = useHistory();
+  const { history, clearHistory } = useHistory();
   const { theme, toggleTheme } = useTheme();
   const leftState = usePokemonState();
   const rightState = usePokemonState();
@@ -65,3 +65,4 @@ export default function App() {
     </>
   );
 }
+
