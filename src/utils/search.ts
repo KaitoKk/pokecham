@@ -11,7 +11,7 @@ function toKatakana(str: string): string {
 function toHalfWidth(str: string): string {
   return str
     .replace(/[Ａ-Ｚａ-ｚ０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
-    .replace(/　/g, ' ');
+    .replace(/\u3000/g, " ");
 }
 
 /** 長音記号の表記ゆれを統一（－/−/—/‐ → ー） */

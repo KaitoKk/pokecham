@@ -1,9 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 declare global {
   interface Window {
     webkitAudioContext?: typeof AudioContext;
-    SpeechRecognition?: typeof SpeechRecognition;
     webkitSpeechRecognition?: typeof SpeechRecognition;
   }
 }
@@ -47,8 +46,8 @@ export function useSpeechRecognition({ onResult, onInterim }: UseSpeechRecogniti
 
   const onResultRef = useRef(onResult);
   const onInterimRef = useRef(onInterim);
-  onResultRef.current = onResult;
-  onInterimRef.current = onInterim;
+  useEffect(() => { onResultRef.current = onResult; }, [onResult]);
+  useEffect(() => { onInterimRef.current = onInterim; }, [onInterim]);
 
   const startListening = useCallback(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;

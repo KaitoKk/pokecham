@@ -6,23 +6,6 @@ import CandidateList from './CandidateList';
 import IdleState from './IdleState';
 import type { PokemonState } from '../hooks/usePokemonState';
 
-const TIER_COLORS: Record<string, string> = {
-  'Uber': '#e85d5d', 'OU': '#7c6dfa', 'UU': '#5dd86a', 'RU': '#f5c842',
-  'NU': '#e8a45d', 'PU': '#5db8e8', 'ZU': '#888', 'NFE': '#aaa',
-  'LC': '#bbb', 'AG': '#ff4444',
-};
-
-function TierBadge({ tier }: { tier?: string }) {
-  if (!tier || tier === 'Illegal') return null;
-  const color = TIER_COLORS[tier] || '#888';
-  return (
-    <span style={{
-      fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
-      letterSpacing: '0.06em', border: `1px solid ${color}`, color,
-    }}>{tier}</span>
-  );
-}
-
 function statColor(v: number): string {
   if (v >= 130) return '#7c6dfa';
   if (v >= 100) return '#5dd86a';
@@ -63,7 +46,6 @@ const SectionHeader = memo(function SectionHeader({ pokemon, style }: SectionPro
               {pokemon.form}
             </div>
           )}
-          <TierBadge tier={pokemon.tier} />
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em', flexShrink: 0 }}>
           {pokemon.no}
