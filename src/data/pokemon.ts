@@ -98,4 +98,5 @@ export const ALIASES: Record<string, string> = {
   '怒る': 'イカリュウ',
   '土砂ドン': 'ドサイドン',
   '万力': 'バンギラス',
+  '発寒': 'ハッサム',
 };
